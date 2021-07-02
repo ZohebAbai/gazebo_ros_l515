@@ -46,6 +46,6 @@ The repository was created to fulfill the need for a package to use simulated L5
 The repository is a combined modification of following repositories:
 - [realsense-ros](https://github.com/IntelRealSense/realsense-ros)
 - [realsense_gazebo_plugin](https://github.com/pal-robotics/realsense_gazebo_plugin)
-- [realsense-ros-gazebo](https://raw.githubusercontent.com/rickstaa/realsense-ros-gazebo/)
+- [realsense-ros-gazebo](https://github.com/rickstaa/realsense-ros-gazebo/)
 
 *Thanks to my colleagues at [Inkers AI](https://inkers.ai) for all the support and resources.*
