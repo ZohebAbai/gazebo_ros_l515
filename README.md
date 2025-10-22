@@ -90,7 +90,42 @@ Expected topics include:
 - `/camera/infrared/image_raw` - Infrared image
 - `/camera/infrared/camera_info` - Infrared camera info
 
-## Demo 
+## Adding L515 to Your Existing Robot
+
+Want to integrate the L515 camera into your own robot? It's easy!
+
+**Quick Example:**
+```xml
+<!-- In your robot's URDF/xacro file -->
+<xacro:include filename="$(find realsense2_description)/urdf/_l515.urdf.xacro" />
+
+<xacro:sensor_l515
+    name="my_camera"
+    topics_ns="my_camera"
+    parent="base_link"
+    use_nominal_extrinsics="true"
+    publish_pointcloud="true">
+    <origin xyz="0.1 0 0.2" rpy="0 0 0" />
+</xacro:sensor_l515>
+```
+
+**For detailed instructions, examples, and troubleshooting, see:**
+📖 **[INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md)**
+
+The integration guide covers:
+- Step-by-step integration instructions
+- Parameter explanations
+- Multiple camera examples
+- Common use cases (mobile robots, robot arms, etc.)
+- Troubleshooting tips
+
+**Example Robot:**
+We provide a complete example of a mobile robot with integrated L515:
+```shell
+ros2 launch realsense2_description example_robot_with_l515.launch.py
+```
+
+## Demo
 [Video](https://youtu.be/KoQNH7YahN8)
 
 ## Acknowledgement

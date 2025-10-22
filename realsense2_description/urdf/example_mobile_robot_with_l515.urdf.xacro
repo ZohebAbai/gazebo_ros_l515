@@ -1,0 +1,276 @@
+<?xml version="1.0"?>
+<!--
+Example: Mobile Robot with L515 Camera Integration
+
+This file demonstrates how to integrate the Intel RealSense L515 camera
+into an existing robot model. This example shows a simple mobile robot
+with the L515 mounted on top.
+
+To use this example:
+  ROS 2:
+    ros2 launch realsense2_description example_robot_with_l515.launch.py
+
+  ROS 1:
+    roslaunch realsense2_description example_robot_with_l515.launch
+-->
+
+<robot name="mobile_robot_with_l515" xmlns:xacro="http://ros.org/wiki/xacro">
+
+  <!-- Include the L515 sensor macro -->
+  <xacro:include filename="$(find realsense2_description)/urdf/_l515.urdf.xacro" />
+
+  <!-- Include materials for visualization -->
+  <xacro:include filename="$(find realsense2_description)/urdf/_materials.urdf.xacro" />
+
+  <!-- Constants for robot dimensions -->
+  <xacro:property name="base_length" value="0.6" />
+  <xacro:property name="base_width" value="0.4" />
+  <xacro:property name="base_height" value="0.2" />
+  <xacro:property name="wheel_radius" value="0.1" />
+  <xacro:property name="wheel_width" value="0.05" />
+  <xacro:property name="wheel_separation" value="0.45" />
+
+  <!-- Base footprint (on the ground) -->
+  <link name="base_footprint"/>
+
+  <!-- Base link joint -->
+  <joint name="base_joint" type="fixed">
+    <parent link="base_footprint"/>
+    <child link="base_link"/>
+    <origin xyz="0 0 ${wheel_radius}" rpy="0 0 0"/>
+  </joint>
+
+  <!-- Robot Base Link -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}"/>
+      </geometry>
+      <material name="blue"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="${base_length} ${base_width} ${base_height}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="20.0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.267" ixy="0.0" ixz="0.0"
+               iyy="0.667" iyz="0.0"
+               izz="0.8"/>
+    </inertial>
+  </link>
+
+  <!-- Gazebo material for base -->
+  <gazebo reference="base_link">
+    <material>Gazebo/Blue</material>
+  </gazebo>
+
+  <!-- Left Wheel -->
+  <link name="left_wheel">
+    <visual>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.005" ixy="0.0" ixz="0.0"
+               iyy="0.005" iyz="0.0"
+               izz="0.01"/>
+    </inertial>
+  </link>
+
+  <joint name="left_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="left_wheel"/>
+    <origin xyz="0 ${wheel_separation/2} 0" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <gazebo reference="left_wheel">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <!-- Right Wheel -->
+  <link name="right_wheel">
+    <visual>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+      <material name="black"/>
+    </visual>
+    <collision>
+      <geometry>
+        <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="1.0"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.005" ixy="0.0" ixz="0.0"
+               iyy="0.005" iyz="0.0"
+               izz="0.01"/>
+    </inertial>
+  </link>
+
+  <joint name="right_wheel_joint" type="continuous">
+    <parent link="base_link"/>
+    <child link="right_wheel"/>
+    <origin xyz="0 ${-wheel_separation/2} 0" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <gazebo reference="right_wheel">
+    <material>Gazebo/Black</material>
+  </gazebo>
+
+  <!-- Caster Wheel (front) -->
+  <link name="caster_wheel">
+    <visual>
+      <geometry>
+        <sphere radius="${wheel_radius/2}"/>
+      </geometry>
+      <material name="grey"/>
+    </visual>
+    <collision>
+      <geometry>
+        <sphere radius="${wheel_radius/2}"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.5"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.001" ixy="0.0" ixz="0.0"
+               iyy="0.001" iyz="0.0"
+               izz="0.001"/>
+    </inertial>
+  </link>
+
+  <joint name="caster_wheel_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="caster_wheel"/>
+    <origin xyz="${base_length/2 - wheel_radius/2} 0 ${-base_height/2 - wheel_radius/4}" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="caster_wheel">
+    <material>Gazebo/Grey</material>
+    <mu1>0.0</mu1>
+    <mu2>0.0</mu2>
+  </gazebo>
+
+  <!-- Camera Mount Platform -->
+  <link name="camera_mount">
+    <visual>
+      <geometry>
+        <box size="0.1 0.1 0.05"/>
+      </geometry>
+      <material name="white"/>
+    </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.1 0.05"/>
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value="0.2"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <inertia ixx="0.0002" ixy="0.0" ixz="0.0"
+               iyy="0.0002" iyz="0.0"
+               izz="0.0003"/>
+    </inertial>
+  </link>
+
+  <joint name="camera_mount_joint" type="fixed">
+    <parent link="base_link"/>
+    <child link="camera_mount"/>
+    <origin xyz="${base_length/4} 0 ${base_height/2 + 0.025}" rpy="0 0 0"/>
+  </joint>
+
+  <gazebo reference="camera_mount">
+    <material>Gazebo/White</material>
+  </gazebo>
+
+  <!--
+  ========================================
+  L515 CAMERA INTEGRATION
+  ========================================
+  This is where we add the L515 camera to our robot!
+
+  The camera is mounted on the camera_mount platform,
+  positioned slightly forward and upward for a good view.
+  -->
+
+  <xacro:sensor_l515
+      name="robot_camera"
+      topics_ns="robot_camera"
+      parent="camera_mount"
+      use_nominal_extrinsics="true"
+      publish_pointcloud="true"
+      add_plug="false"
+      use_mesh="true">
+      <!-- Mount camera 5cm above the mount platform, facing forward -->
+      <origin xyz="0.05 0 0.025" rpy="0 0 0" />
+  </xacro:sensor_l515>
+
+  <!--
+  ALTERNATIVE EXAMPLES (commented out):
+
+  Example 1: Tilted camera for looking slightly downward
+  <xacro:sensor_l515
+      name="robot_camera"
+      topics_ns="robot_camera"
+      parent="camera_mount"
+      use_nominal_extrinsics="true"
+      publish_pointcloud="true">
+      <origin xyz="0.05 0 0.025" rpy="0 -0.3 0" />
+  </xacro:sensor_l515>
+
+  Example 2: Multiple cameras (front and rear)
+  <xacro:sensor_l515
+      name="front_camera"
+      topics_ns="front_camera"
+      parent="base_link"
+      use_nominal_extrinsics="true"
+      publish_pointcloud="true">
+      <origin xyz="0.3 0 0.15" rpy="0 0 0" />
+  </xacro:sensor_l515>
+
+  <xacro:sensor_l515
+      name="rear_camera"
+      topics_ns="rear_camera"
+      parent="base_link"
+      use_nominal_extrinsics="true"
+      publish_pointcloud="false">
+      <origin xyz="-0.3 0 0.15" rpy="0 0 3.14159" />
+  </xacro:sensor_l515>
+  -->
+
+  <!-- Optional: Add differential drive plugin for robot movement (Gazebo Classic) -->
+  <gazebo>
+    <plugin name="differential_drive_controller" filename="libgazebo_ros_diff_drive.so">
+      <update_rate>50</update_rate>
+      <left_joint>left_wheel_joint</left_joint>
+      <right_joint>right_wheel_joint</right_joint>
+      <wheel_separation>${wheel_separation}</wheel_separation>
+      <wheel_diameter>${2*wheel_radius}</wheel_diameter>
+      <max_wheel_torque>20</max_wheel_torque>
+      <command_topic>cmd_vel</command_topic>
+      <publish_odom>true</publish_odom>
+      <publish_odom_tf>true</publish_odom_tf>
+      <publish_wheel_tf>true</publish_wheel_tf>
+      <odometry_topic>odom</odometry_topic>
+      <odometry_frame>odom</odometry_frame>
+      <robot_base_frame>base_footprint</robot_base_frame>
+    </plugin>
+  </gazebo>
+
+</robot>
