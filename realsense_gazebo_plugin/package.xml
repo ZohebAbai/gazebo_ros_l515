@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
-<package format="2">
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>realsense_gazebo_plugin</name>
-  <version>1.1.0</version>
-  <description>Intel RealSense L515 Gazebo plugin package</description>
-  
+  <version>2.0.0</version>
+  <description>Intel RealSense L515 Gazebo plugin package for ROS2</description>
+
   <maintainer email="aglauocnv@relay.firefox.com">Zoheb Abai</maintainer>
 
   <author email="sergey.dorodnicov@intel.com">Sergey Dorodnicov</author>
@@ -14,15 +15,20 @@
   <url type="website">http://www.ros.org/wiki/RealSense</url>
   <url type="bugtracker">https://github.com/intel-ros/realsense/issues</url>
 
-  <buildtool_depend>catkin</buildtool_depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
 
+  <depend>rclcpp</depend>
+  <depend>gazebo_dev</depend>
   <depend>gazebo_ros</depend>
-  <depend>roscpp</depend>
   <depend>sensor_msgs</depend>
   <depend>image_transport</depend>
   <depend>camera_info_manager</depend>
 
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
   <export>
+    <build_type>ament_cmake</build_type>
     <gazebo_ros
       plugin_path="${prefix}/lib"
       gazebo_media_path="${prefix}"
