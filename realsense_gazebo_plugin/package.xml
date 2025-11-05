@@ -3,7 +3,7 @@
 <package format="3">
   <name>realsense_gazebo_plugin</name>
   <version>3.0.0</version>
-  <description>Intel RealSense L515 Gazebo plugin package for ROS2 (supports both Gazebo Classic and Gazebo Harmonic)</description>
+  <description>Intel RealSense L515 Gazebo plugin for ROS2 Jazzy + Gazebo Harmonic</description>
 
   <maintainer email="aglauocnv@relay.firefox.com">Zoheb Abai</maintainer>
 
@@ -13,7 +13,7 @@
   <license>Apache 2.0</license>
 
   <url type="website">http://www.ros.org/wiki/RealSense</url>
-  <url type="bugtracker">https://github.com/intel-ros/realsense/issues</url>
+  <url type="bugtracker">https://github.com/ZohebAbai/gazebo_ros_l515/issues</url>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
@@ -21,30 +21,12 @@
   <depend>sensor_msgs</depend>
   <depend>image_transport</depend>
   <depend>camera_info_manager</depend>
-
-  <!-- Gazebo Classic dependencies (for Humble, Iron, and earlier) -->
-  <depend condition="$ROS_DISTRO == humble">gazebo_dev</depend>
-  <depend condition="$ROS_DISTRO == humble">gazebo_ros</depend>
-  <depend condition="$ROS_DISTRO == iron">gazebo_dev</depend>
-  <depend condition="$ROS_DISTRO == iron">gazebo_ros</depend>
-  <depend condition="$ROS_DISTRO == foxy">gazebo_dev</depend>
-  <depend condition="$ROS_DISTRO == foxy">gazebo_ros</depend>
-  <depend condition="$ROS_DISTRO == galactic">gazebo_dev</depend>
-  <depend condition="$ROS_DISTRO == galactic">gazebo_ros</depend>
-
-  <!-- New Gazebo dependencies (for Jazzy, Rolling, and later) -->
-  <depend condition="$ROS_DISTRO == jazzy">ros_gz_sim</depend>
-  <depend condition="$ROS_DISTRO == rolling">ros_gz_sim</depend>
+  <depend>ros_gz_sim</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
-    <gazebo_ros
-      plugin_path="${prefix}/lib"
-      gazebo_media_path="${prefix}"
-      gazebo_model_path="${prefix}/models"
-      />
   </export>
 </package>
