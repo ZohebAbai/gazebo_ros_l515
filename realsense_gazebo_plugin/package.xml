@@ -21,7 +21,11 @@
   <depend>sensor_msgs</depend>
   <depend>image_transport</depend>
   <depend>camera_info_manager</depend>
-  <depend>ros_gz_sim</depend>
+  <depend>gz-sim8</depend>
+  <depend>gz-plugin2</depend>
+  <depend>gz-sensors8</depend>
+  <depend>gz-rendering8</depend>
+  <depend>gz-common5</depend>
 
   <test_depend>ament_lint_auto</test_depend>
   <test_depend>ament_lint_common</test_depend>

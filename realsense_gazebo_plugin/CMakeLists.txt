@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(realsense_gazebo_plugin)
 
-# Default to C++17
+# Default to C++17 for Gazebo Harmonic
 if(NOT CMAKE_CXX_STANDARD)
   set(CMAKE_CXX_STANDARD 17)
 endif()
@@ -19,12 +19,23 @@ find_package(sensor_msgs REQUIRED)
 
 # Find Gazebo Harmonic (new Gazebo for ROS2 Jazzy)
 find_package(gz-sim8 REQUIRED)
-find_package(ros_gz_sim REQUIRED)
+set(GZ_SIM_VER 8)
+
+find_package(gz-plugin2 REQUIRED COMPONENTS register)
+set(GZ_PLUGIN_VER 2)
+
+find_package(gz-sensors8 REQUIRED)
+set(GZ_SENSORS_VER 8)
+
+find_package(gz-rendering8 REQUIRED)
+set(GZ_RENDERING_VER 8)
+
+find_package(gz-common5 REQUIRED)
+set(GZ_COMMON_VER 5)
 
 # Build plugin library
 add_library(${PROJECT_NAME} SHARED
-    src/RealSensePlugin.cpp
-    src/gazebo_ros_realsense.cpp
+    src/RealSensePluginHarmonic.cpp
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC
@@ -32,12 +43,20 @@ target_include_directories(${PROJECT_NAME} PUBLIC
   $<INSTALL_INTERFACE:include>
 )
 
+# Link dependencies
 ament_target_dependencies(${PROJECT_NAME}
   rclcpp
   image_transport
   camera_info_manager
   sensor_msgs
-  ros_gz_sim
+)
+
+target_link_libraries(${PROJECT_NAME}
+  gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
+  gz-plugin${GZ_PLUGIN_VER}::gz-plugin${GZ_PLUGIN_VER}
+  gz-sensors${GZ_SENSORS_VER}::gz-sensors${GZ_SENSORS_VER}
+  gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
+  gz-common${GZ_COMMON_VER}::gz-common${GZ_COMMON_VER}
 )
 
 # Install library
@@ -59,7 +78,11 @@ ament_export_dependencies(
   image_transport
   camera_info_manager
   sensor_msgs
-  ros_gz_sim
+  gz-sim8
+  gz-plugin2
+  gz-sensors8
+  gz-rendering8
+  gz-common5
 )
 
 ament_package()
