@@ -95,7 +95,7 @@ This is the Gazebo URDF model for the Intel RealSense L515 camera
     </gazebo>
 
     <gazebo>
-      <plugin name="${topics_ns}" filename="librealsense_gazebo_plugin.so">
+      <plugin name="realsense_gazebo_plugin::RealSensePluginHarmonic" filename="realsense_gazebo_plugin">
         <prefix>${camera_name}</prefix>
         <depthUpdateRate>30.0</depthUpdateRate>
         <colorUpdateRate>30.0</colorUpdateRate>

@@ -1,53 +1,88 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.5)
 project(realsense_gazebo_plugin)
 
-# Load catkin and all dependencies required for this package
-find_package(catkin REQUIRED COMPONENTS
-    roscpp
-    gazebo_ros
-    image_transport
-    camera_info_manager
-    sensor_msgs
-)
-find_package(gazebo REQUIRED)
+# Default to C++17 for Gazebo Harmonic
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${GAZEBO_CXX_FLAGS}")
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
 
-catkin_package(
-    DEPENDS
-        roscpp
-        gazebo_ros
-        image_transport
-        camera_info_manager
-        sensor_msgs
-)
+# Find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(image_transport REQUIRED)
+find_package(camera_info_manager REQUIRED)
+find_package(sensor_msgs REQUIRED)
 
-include_directories(
-    include)
-include_directories(
-    SYSTEM
-    ${catkin_INCLUDE_DIRS}
-    ${GAZEBO_INCLUDE_DIRS}
-)
-link_directories(${GAZEBO_LIBRARY_DIRS})
+# Find Gazebo Harmonic (new Gazebo for ROS2 Jazzy)
+find_package(gz-sim8 REQUIRED)
+set(GZ_SIM_VER 8)
 
-add_library(
-    ${PROJECT_NAME}
-    src/RealSensePlugin.cpp
-    src/gazebo_ros_realsense.cpp
-    )
+find_package(gz-plugin2 REQUIRED COMPONENTS register)
+set(GZ_PLUGIN_VER 2)
 
-target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES} ${GAZEBO_LIBRARIES})
-add_dependencies(${PROJECT_NAME} ${catkin_EXPORTED_TARGETS})
+find_package(gz-sensors8 REQUIRED)
+set(GZ_SENSORS_VER 8)
 
-install(
-    TARGETS
-        ${PROJECT_NAME}
-    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-    LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+find_package(gz-rendering8 REQUIRED)
+set(GZ_RENDERING_VER 8)
+
+find_package(gz-common5 REQUIRED)
+set(GZ_COMMON_VER 5)
+
+# Build plugin library
+add_library(${PROJECT_NAME} SHARED
+    src/RealSensePluginHarmonic.cpp
 )
 
-foreach(dir include)
-    install(DIRECTORY ${dir}/
-        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/${dir})
-endforeach(dir)
+target_include_directories(${PROJECT_NAME} PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+
+# Link dependencies
+ament_target_dependencies(${PROJECT_NAME}
+  rclcpp
+  image_transport
+  camera_info_manager
+  sensor_msgs
+)
+
+target_link_libraries(${PROJECT_NAME}
+  gz-sim${GZ_SIM_VER}::gz-sim${GZ_SIM_VER}
+  gz-plugin${GZ_PLUGIN_VER}::gz-plugin${GZ_PLUGIN_VER}
+  gz-sensors${GZ_SENSORS_VER}::gz-sensors${GZ_SENSORS_VER}
+  gz-rendering${GZ_RENDERING_VER}::gz-rendering${GZ_RENDERING_VER}
+  gz-common${GZ_COMMON_VER}::gz-common${GZ_COMMON_VER}
+)
+
+# Install library
+install(TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+# Install include directory
+install(DIRECTORY include/
+  DESTINATION include
+)
+
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
+ament_export_dependencies(
+  rclcpp
+  image_transport
+  camera_info_manager
+  sensor_msgs
+  gz-sim8
+  gz-plugin2
+  gz-sensors8
+  gz-rendering8
+  gz-common5
+)
+
+ament_package()
