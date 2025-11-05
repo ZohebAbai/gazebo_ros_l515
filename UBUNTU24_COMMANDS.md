@@ -1,5 +1,14 @@
 # Complete Commands for Ubuntu 24.04 + ROS2 Jazzy + Gazebo Harmonic
 
+**⚠️ IMPORTANT:** This package ONLY supports ROS2 Jazzy + Gazebo Harmonic on Ubuntu 24.04.
+- **No ROS 1 support** (Melodic, Noetic, etc.)
+- **No older ROS2 support** (Foxy, Galactic, Humble, Iron)
+- **No Gazebo Classic support** (gazebo11, etc.)
+
+See [VERSION_SUPPORT.md](VERSION_SUPPORT.md) for details on version compatibility.
+
+---
+
 Copy and paste these commands into your Ubuntu 24.04 terminal.
 
 ## Step 1: Install ROS2 Jazzy

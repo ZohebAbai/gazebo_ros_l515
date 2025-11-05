@@ -8,6 +8,21 @@
 
 ![Gazebo L515](gazebo_l515.png)
 
+## ⚠️ Important Notice - Version Support
+
+**This version ONLY supports:**
+- ✅ **ROS2 Jazzy** (and Rolling)
+- ✅ **Gazebo Harmonic** (gz-sim8)
+- ✅ **Ubuntu 24.04**
+
+**Support DISCONTINUED for:**
+- ❌ **ROS 1** (Melodic, Noetic, etc.) - Not supported
+- ❌ **Older ROS2** (Foxy, Galactic, Humble, Iron) - Not supported
+- ❌ **Gazebo Classic** (gazebo11, gazebo9, etc.) - Not supported
+- ❌ **Older Ubuntu** (20.04, 22.04) - Not supported
+
+> **Note:** If you need support for ROS 1 or older ROS2 distributions with Gazebo Classic, please use an earlier version of this repository or contact the maintainer.
+
 ## Requirements
 
 - **OS:** Ubuntu 24.04 (Noble Numbat)

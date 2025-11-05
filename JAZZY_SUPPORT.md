@@ -1,5 +1,16 @@
 # ROS2 Jazzy + Gazebo Harmonic Support
 
+**⚠️ BREAKING CHANGE:** As of version 3.0.0, this package ONLY supports ROS2 Jazzy + Gazebo Harmonic.
+
+**Discontinued support for:**
+- ❌ ROS 1 (all distributions)
+- ❌ ROS2 Foxy, Galactic, Humble, Iron
+- ❌ Gazebo Classic (gazebo11, gazebo9, etc.)
+
+If you need older version support, see [VERSION_SUPPORT.md](VERSION_SUPPORT.md).
+
+---
+
 This document explains the support for ROS2 Jazzy with the new Gazebo (Gazebo Harmonic).
 
 ## What Changed in Jazzy?
