@@ -11,27 +11,50 @@
 
 ## ROS2 Port
 
-This package has been ported to ROS2 (Foxy/Galactic/Humble/Iron). The port includes:
-- Updated build system to `ament_cmake`
+This package has been ported to ROS2 and supports multiple ROS2 distributions and Gazebo versions:
+
+**Supported ROS2 Distributions:**
+- ✅ **Foxy** / **Galactic** / **Humble** / **Iron** - Uses Gazebo Classic (gazebo11)
+- ✅ **Jazzy** / **Rolling** - Uses new Gazebo (Gazebo Harmonic/Garden)
+
+**Key Features:**
+- Updated build system to `ament_cmake` with automatic Gazebo detection
 - Converted all C++ code to use `rclcpp` and ROS2 APIs
 - Converted launch files to Python format
-- Updated dependencies for ROS2 compatibility
+- Automatic detection of Gazebo Classic vs New Gazebo based on ROS distro
 
 ## Install Dependencies
-- [ROS2](https://docs.ros.org/en/humble/Installation.html) (Foxy, Galactic, Humble, or Iron)
-- [Gazebo](https://gazebosim.org/tutorials?tut=install_ubuntu&cat=install) (Classic or Ignition/Gazebo)
-- gazebo_ros_pkgs for ROS2
 
-Install ROS2 dependencies:
+### For ROS2 Humble, Iron (and earlier) - Gazebo Classic
+
 ```shell
-sudo apt install ros-${ROS_DISTRO}-gazebo-ros-pkgs
-sudo apt install ros-${ROS_DISTRO}-gazebo-ros
-sudo apt install ros-${ROS_DISTRO}-image-transport
-sudo apt install ros-${ROS_DISTRO}-camera-info-manager
-sudo apt install ros-${ROS_DISTRO}-robot-state-publisher
-sudo apt install ros-${ROS_DISTRO}-joint-state-publisher
-sudo apt install ros-${ROS_DISTRO}-xacro
+# Install Gazebo Classic dependencies
+sudo apt install \
+    ros-${ROS_DISTRO}-gazebo-ros-pkgs \
+    ros-${ROS_DISTRO}-gazebo-ros \
+    ros-${ROS_DISTRO}-image-transport \
+    ros-${ROS_DISTRO}-camera-info-manager \
+    ros-${ROS_DISTRO}-robot-state-publisher \
+    ros-${ROS_DISTRO}-joint-state-publisher \
+    ros-${ROS_DISTRO}-xacro
 ```
+
+### For ROS2 Jazzy (and later) - Gazebo Harmonic
+
+```shell
+# Install new Gazebo (Harmonic) dependencies
+sudo apt install \
+    ros-${ROS_DISTRO}-ros-gz-sim \
+    ros-${ROS_DISTRO}-ros-gz-bridge \
+    ros-${ROS_DISTRO}-image-transport \
+    ros-${ROS_DISTRO}-camera-info-manager \
+    ros-${ROS_DISTRO}-robot-state-publisher \
+    ros-${ROS_DISTRO}-joint-state-publisher \
+    ros-${ROS_DISTRO}-xacro \
+    gz-harmonic
+```
+
+**Note:** The package automatically detects which Gazebo version to use based on your ROS_DISTRO environment variable.
 
 ## Build the Package
 If you already have a ROS2 workspace skip this step, else:
