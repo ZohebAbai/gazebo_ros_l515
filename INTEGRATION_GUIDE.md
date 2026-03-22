@@ -110,21 +110,25 @@ The `<origin>` block inside the macro call defines where the camera is mounted r
 - `xyz`: Position offset in meters (forward, left, up)
 - `rpy`: Orientation in radians (roll, pitch, yaw)
 
-## ROS Topics Published
+## ROS2 Topics Published
 
-When integrated, the L515 sensor will publish to the following topics (assuming `topics_ns="camera"`):
+When integrated, the L515 sensor publishes the following ROS2 topics
+(assuming `topics_ns="camera"`):
 
-**For ROS 1:**
-- `/camera/color/image_raw` - RGB color image
-- `/camera/color/camera_info` - Color camera calibration
-- `/camera/depth/image_rect_raw` - Depth image
-- `/camera/depth/camera_info` - Depth camera calibration
-- `/camera/infra/image_raw` - Infrared image
-- `/camera/infra/camera_info` - Infrared camera calibration
-- `/camera/depth/color/points` - Point cloud (if enabled)
+| Topic | Type | Notes |
+|-------|------|-------|
+| `/camera/color/image_raw` | `sensor_msgs/Image` | 1920×1080 RGB |
+| `/camera/color/camera_info` | `sensor_msgs/CameraInfo` | |
+| `/camera/depth/image_raw` | `sensor_msgs/Image` | Float32 depth map |
+| `/camera/depth/camera_info` | `sensor_msgs/CameraInfo` | |
+| `/camera/infra/image_raw` | `sensor_msgs/Image` | Grayscale |
+| `/camera/infra/camera_info` | `sensor_msgs/CameraInfo` | |
+| `/camera/depth/color/points` | `sensor_msgs/PointCloud2` | Requires `publish_pointcloud="true"` |
 
-**For ROS 2:**
-Same topic names, accessed via `ros2 topic list`
+> **Bridge requirement:** topics are delivered to ROS2 via `ros_gz_image` and `ros_gz_bridge`.
+> The bridge arguments in your launch file must match the `topics_ns` you choose.
+> If you use `topics_ns="front_camera"`, bridge `/front_camera/color`,
+> `/front_camera/depth`, `/front_camera/depth/points`, etc.
 
 ## Common Integration Examples
 

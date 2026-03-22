@@ -129,9 +129,11 @@ sudo apt install -y \
 ```bash
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws/src
-git clone https://github.com/ZohebAbai/gazebo_ros_l515.git
+git clone -b update/2025-jazzy-harmonic-port https://github.com/ZohebAbai/gazebo_ros_l515.git
 cd ~/ros2_ws
 ```
+
+> Once PR #5 is merged into `main`, drop the `-b update/2025-jazzy-harmonic-port` flag.
 
 ### 5. Build
 
@@ -259,10 +261,10 @@ Expected topics:
 
 Check data rates:
 ```bash
-# Color image — expect ~30 Hz
+# Color image — expect ~10-30 Hz (depends on GPU/CPU performance)
 ros2 topic hz /camera/color/image_raw
 
-# Point cloud — expect ~30 Hz
+# Point cloud — expect ~10-30 Hz
 ros2 topic hz /camera/depth/color/points
 
 # Print one camera_info message
@@ -289,8 +291,24 @@ Include the L515 macro in your URDF/xacro:
 </xacro:sensor_l515>
 ```
 
-See [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md) for the full parameter reference and example
-launch file.
+> **Note:** `topics_ns` sets the Gazebo sensor topic prefix and must match the bridge
+> configuration in your launch file. The default `"camera"` matches the provided launch files.
+> If you use a different namespace (e.g. `topics_ns="front_camera"`), update the
+> `ros_gz_image` and `ros_gz_bridge` arguments in your launch file to match
+> (e.g. `/front_camera/color`, `/front_camera/depth`, `/front_camera/depth/points`).
+
+**ROS2 topics published** (with `topics_ns="camera"`):
+
+| Topic | Type | Description |
+|-------|------|-------------|
+| `/camera/color/image_raw` | `sensor_msgs/Image` | 1920×1080 RGB image |
+| `/camera/depth/image_raw` | `sensor_msgs/Image` | Depth map |
+| `/camera/infra/image_raw` | `sensor_msgs/Image` | Infrared image |
+| `/camera/depth/color/points` | `sensor_msgs/PointCloud2` | Colored point cloud |
+| `/camera/*/camera_info` | `sensor_msgs/CameraInfo` | Calibration for each sensor |
+
+See [INTEGRATION_GUIDE.md](INTEGRATION_GUIDE.md) for the full parameter reference and
+multi-camera examples.
 
 ---
 
