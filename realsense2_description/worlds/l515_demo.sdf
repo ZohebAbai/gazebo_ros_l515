@@ -1,0 +1,278 @@
+<?xml version="1.0" ?>
+<!--
+  L515 Demo World — Intel RealSense L515 LiDAR/RGB-D Camera Simulation
+  Gazebo Harmonic (gz-sim8) + ROS2 Jazzy
+
+  Scene layout (camera at world origin, facing +X):
+    - 8 distinct colored objects at depths 1m to 5m
+    - Back wall at 5.5m as a natural stopping surface for the point cloud
+    - Ground plane for spatial reference
+    - Good directional lighting for realistic color rendering
+
+  Launch with:
+    ros2 launch realsense2_description demo.launch.py
+-->
+<sdf version="1.9">
+  <world name="l515_demo">
+
+    <gravity>0 0 -9.8</gravity>
+
+    <!-- Required Gazebo Harmonic system plugins -->
+    <plugin filename="gz-sim-physics-system"
+            name="gz::sim::systems::Physics"/>
+    <plugin filename="gz-sim-user-commands-system"
+            name="gz::sim::systems::UserCommands"/>
+    <plugin filename="gz-sim-scene-broadcaster-system"
+            name="gz::sim::systems::SceneBroadcaster"/>
+    <!-- CRITICAL: sensors plugin with ogre2 required for camera rendering -->
+    <plugin filename="gz-sim-sensors-system"
+            name="gz::sim::systems::Sensors">
+      <render_engine>ogre2</render_engine>
+    </plugin>
+
+    <!-- Main directional light -->
+    <light name="sun" type="directional">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 10 0 0 0</pose>
+      <diffuse>0.9 0.9 0.9 1</diffuse>
+      <specular>0.35 0.35 0.35 1</specular>
+      <direction>0.3 -0.5 -0.9</direction>
+      <attenuation>
+        <range>1000</range>
+        <constant>0.9</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+    </light>
+
+    <!-- Soft fill light from the opposite side -->
+    <light name="fill_light" type="directional">
+      <cast_shadows>false</cast_shadows>
+      <pose>0 0 5 0 0 0</pose>
+      <diffuse>0.3 0.3 0.35 1</diffuse>
+      <specular>0.0 0.0 0.0 1</specular>
+      <direction>-0.3 0.5 -0.8</direction>
+    </light>
+
+    <!-- ============================================================
+         Ground plane
+         ============================================================ -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>20 20</size>
+            </plane>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>20 20</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.35 0.35 0.35 1</ambient>
+            <diffuse>0.50 0.50 0.50 1</diffuse>
+            <specular>0.05 0.05 0.05 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ============================================================
+         Back wall — white backdrop at ~5.5 m, fills the point cloud
+         ============================================================ -->
+    <model name="back_wall">
+      <static>true</static>
+      <pose>5.5 0 1.75 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.1 8.0 3.5</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.1 8.0 3.5</size></box></geometry>
+          <material>
+            <ambient>0.80 0.80 0.75 1</ambient>
+            <diffuse>0.88 0.88 0.82 1</diffuse>
+            <specular>0.10 0.10 0.10 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ============================================================
+         Object 1 — RED BOX  (nearest, left)  ~1.0 m
+         ============================================================ -->
+    <model name="red_box">
+      <static>true</static>
+      <pose>1.0 -0.4 0.3 0 0 0.3</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.3 0.3 0.6</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.3 0.3 0.6</size></box></geometry>
+          <material>
+            <ambient>0.85 0.08 0.08 1</ambient>
+            <diffuse>0.90 0.08 0.08 1</diffuse>
+            <specular>0.40 0.20 0.20 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ============================================================
+         Object 2 — YELLOW CYLINDER  (nearest, right)  ~1.0 m
+         ============================================================ -->
+    <model name="yellow_cylinder">
+      <static>true</static>
+      <pose>1.1 0.45 0.35 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><cylinder><radius>0.15</radius><length>0.70</length></cylinder></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>0.15</radius><length>0.70</length></cylinder></geometry>
+          <material>
+            <ambient>0.95 0.85 0.05 1</ambient>
+            <diffuse>0.95 0.88 0.05 1</diffuse>
+            <specular>0.40 0.40 0.10 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ============================================================
+         Object 3 — GREEN SPHERE  (mid-near, center-right)  ~1.8 m
+         ============================================================ -->
+    <model name="green_sphere">
+      <static>true</static>
+      <pose>1.8 0.35 0.35 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><sphere><radius>0.32</radius></sphere></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><sphere><radius>0.32</radius></sphere></geometry>
+          <material>
+            <ambient>0.05 0.80 0.10 1</ambient>
+            <diffuse>0.05 0.88 0.10 1</diffuse>
+            <specular>0.20 0.50 0.20 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ============================================================
+         Object 4 — BLUE SPHERE  (mid, left, elevated)  ~2.2 m
+         ============================================================ -->
+    <model name="blue_sphere">
+      <static>true</static>
+      <pose>2.2 -0.55 1.05 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><sphere><radius>0.28</radius></sphere></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><sphere><radius>0.28</radius></sphere></geometry>
+          <material>
+            <ambient>0.05 0.15 0.90 1</ambient>
+            <diffuse>0.05 0.15 0.92 1</diffuse>
+            <specular>0.25 0.25 0.55 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ============================================================
+         Object 5 — ORANGE TALL PILLAR  (mid-far, right)  ~3.0 m
+         ============================================================ -->
+    <model name="orange_pillar">
+      <static>true</static>
+      <pose>3.0 0.65 0.75 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><cylinder><radius>0.18</radius><length>1.50</length></cylinder></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><cylinder><radius>0.18</radius><length>1.50</length></cylinder></geometry>
+          <material>
+            <ambient>0.95 0.48 0.05 1</ambient>
+            <diffuse>0.95 0.50 0.05 1</diffuse>
+            <specular>0.40 0.25 0.10 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ============================================================
+         Object 6 — PURPLE BOX  (far, left, eye-level)  ~3.8 m
+         ============================================================ -->
+    <model name="purple_box">
+      <static>true</static>
+      <pose>3.8 -0.7 1.2 0 0 0.8</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.5 0.2 0.7</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.5 0.2 0.7</size></box></geometry>
+          <material>
+            <ambient>0.58 0.08 0.82 1</ambient>
+            <diffuse>0.60 0.08 0.85 1</diffuse>
+            <specular>0.35 0.15 0.45 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ============================================================
+         Object 7 — CYAN SPHERE  (deepest object, center)  ~4.5 m
+         ============================================================ -->
+    <model name="cyan_sphere">
+      <static>true</static>
+      <pose>4.5 0.05 1.45 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><sphere><radius>0.38</radius></sphere></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><sphere><radius>0.38</radius></sphere></geometry>
+          <material>
+            <ambient>0.05 0.82 0.88 1</ambient>
+            <diffuse>0.05 0.85 0.90 1</diffuse>
+            <specular>0.20 0.50 0.55 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ============================================================
+         Object 8 — WHITE BOX  (mid, center-low)  ~2.6 m
+         Provides a neutral reference surface in the point cloud
+         ============================================================ -->
+    <model name="white_box">
+      <static>true</static>
+      <pose>2.6 -0.05 0.2 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry><box><size>0.6 0.6 0.4</size></box></geometry>
+        </collision>
+        <visual name="visual">
+          <geometry><box><size>0.6 0.6 0.4</size></box></geometry>
+          <material>
+            <ambient>0.88 0.88 0.88 1</ambient>
+            <diffuse>0.92 0.92 0.92 1</diffuse>
+            <specular>0.50 0.50 0.50 1</specular>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+  </world>
+</sdf>
