@@ -28,6 +28,7 @@ This is the Gazebo URDF model for the Intel RealSense L515 camera
       <!--<max_vel>0.01</max_vel>
       <min_depth>0</min_depth>-->
       <sensor name="${camera_name}color" type="camera">
+        <topic>/${topics_ns}/color</topic>
         <camera name="${camera_name}">
           <horizontal_fov>${71.01*deg_to_rad}</horizontal_fov>
           <image>
@@ -50,6 +51,7 @@ This is the Gazebo URDF model for the Intel RealSense L515 camera
         <visualize>1</visualize>
       </sensor>
       <sensor name="${camera_name}ired" type="camera">
+        <topic>/${topics_ns}/infra</topic>
         <camera name="${camera_name}">
           <horizontal_fov>${70*deg_to_rad}</horizontal_fov>
           <image>
@@ -72,6 +74,7 @@ This is the Gazebo URDF model for the Intel RealSense L515 camera
         <visualize>0</visualize>
       </sensor>
       <sensor name="${camera_name}depth" type="depth">
+        <topic>/${topics_ns}/depth</topic>
         <camera name="${camera_name}">
           <horizontal_fov>${70*deg_to_rad}</horizontal_fov>
           <image>
