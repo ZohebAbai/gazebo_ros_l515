@@ -16,11 +16,11 @@ To use this example:
 
 <robot name="mobile_robot_with_l515" xmlns:xacro="http://ros.org/wiki/xacro">
 
-  <!-- Include the L515 sensor macro -->
+  <!-- Include the L515 sensor macro. _l515.urdf.xacro already pulls in
+       _materials.urdf.xacro, so we must not include materials a second
+       time here — xacro has no include guard and a duplicate <material>
+       tag fails URDF parsing in robot_state_publisher. -->
   <xacro:include filename="$(find realsense2_description)/urdf/_l515.urdf.xacro" />
-
-  <!-- Include materials for visualization -->
-  <xacro:include filename="$(find realsense2_description)/urdf/_materials.urdf.xacro" />
 
   <!-- Constants for robot dimensions -->
   <xacro:property name="base_length" value="0.6" />
