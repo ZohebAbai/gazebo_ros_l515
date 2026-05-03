@@ -27,13 +27,20 @@ This is the Gazebo URDF model for the Intel RealSense L515 camera
       <kd>1</kd>
       <!--<max_vel>0.01</max_vel>
       <min_depth>0</min_depth>-->
+      <!-- Color resolution + rate sized for the training pipeline.
+           Gemma's vision encoder downsamples to ~448px on its long edge,
+           and frame_capture runs at 5 Hz, so 640×480 @ 10 Hz already
+           oversamples both ends. The original 1920×1080 @ 30 Hz pinned
+           the headless EGL renderer at RTF ~0.4 and produced repeated
+           frames because gz-sim was publishing the previously-rendered
+           buffer whenever the new render didn't land in time. -->
       <sensor name="${camera_name}color" type="camera">
         <topic>/${topics_ns}/color</topic>
         <camera name="${camera_name}">
           <horizontal_fov>${71.01*deg_to_rad}</horizontal_fov>
           <image>
-            <width>1920</width>
-            <height>1080</height>
+            <width>640</width>
+            <height>480</height>
             <format>RGB_INT8</format>
           </image>
           <clip>
@@ -47,9 +54,14 @@ This is the Gazebo URDF model for the Intel RealSense L515 camera
           </noise>
         </camera>
         <always_on>1</always_on>
-        <update_rate>30</update_rate>
+        <update_rate>10</update_rate>
         <visualize>1</visualize>
       </sensor>
+      <!-- Infra + depth streams stay declared so the realsense_gazebo_plugin
+           below keeps its three-channel plumbing intact, but their render
+           rate drops to 1 Hz: nothing in the training or inference pipeline
+           consumes them, and rendering 1024×768 at 90 Hz on the same GPU
+           starves the color sensor of frames. -->
       <sensor name="${camera_name}ired" type="camera">
         <topic>/${topics_ns}/infra</topic>
         <camera name="${camera_name}">
@@ -70,7 +82,7 @@ This is the Gazebo URDF model for the Intel RealSense L515 camera
           </noise>
         </camera>
         <always_on>1</always_on>
-        <update_rate>90</update_rate>
+        <update_rate>1</update_rate>
         <visualize>0</visualize>
       </sensor>
       <sensor name="${camera_name}depth" type="depth">
@@ -92,7 +104,7 @@ This is the Gazebo URDF model for the Intel RealSense L515 camera
           </noise>
         </camera>
         <always_on>1</always_on>
-        <update_rate>90</update_rate>
+        <update_rate>1</update_rate>
         <visualize>0</visualize>
       </sensor>
     </gazebo>
@@ -100,9 +112,11 @@ This is the Gazebo URDF model for the Intel RealSense L515 camera
     <gazebo>
       <plugin name="realsense_gazebo_plugin::RealSensePluginHarmonic" filename="realsense_gazebo_plugin">
         <prefix>${camera_name}</prefix>
-        <depthUpdateRate>30.0</depthUpdateRate>
-        <colorUpdateRate>30.0</colorUpdateRate>
-        <infraredUpdateRate>30.0</infraredUpdateRate>
+        <!-- Match the gz-sim sensor update rates above so the plugin doesn't
+             throttle harder than the renderer is producing. -->
+        <depthUpdateRate>1.0</depthUpdateRate>
+        <colorUpdateRate>10.0</colorUpdateRate>
+        <infraredUpdateRate>1.0</infraredUpdateRate>
         <depthTopicName>/camera/depth/image_rect_raw</depthTopicName>
         <depthCameraInfoTopicName>/camera/depth/camera_info</depthCameraInfoTopicName>
         <colorTopicName>/camera/color/image_raw</colorTopicName>
