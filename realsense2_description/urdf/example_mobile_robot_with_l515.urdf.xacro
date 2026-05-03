@@ -98,6 +98,10 @@ To use this example:
 
   <gazebo reference="left_wheel">
     <material>Gazebo/Black</material>
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
+    <kp>1e6</kp>
+    <kd>10</kd>
   </gazebo>
 
   <!-- Right Wheel -->
@@ -131,6 +135,10 @@ To use this example:
 
   <gazebo reference="right_wheel">
     <material>Gazebo/Black</material>
+    <mu1>1.5</mu1>
+    <mu2>1.5</mu2>
+    <kp>1e6</kp>
+    <kd>10</kd>
   </gazebo>
 
   <!-- Caster Wheel (front) -->
@@ -158,13 +166,20 @@ To use this example:
   <joint name="caster_wheel_joint" type="fixed">
     <parent link="base_link"/>
     <child link="caster_wheel"/>
-    <origin xyz="${base_length/2 - wheel_radius/2} 0 ${-base_height/2 - wheel_radius/4}" rpy="0 0 0"/>
+    <!-- Caster z must put its bottom at the same level as the main wheels'
+         bottoms. Main wheels: center at z=0, radius=${wheel_radius}, so
+         bottom at z=-${wheel_radius}. Caster radius=${wheel_radius/2}, so
+         caster center must be at z=-${wheel_radius/2}. The original
+         expression (-base_height/2 - wheel_radius/4) put it 7.5 cm below
+         that, tipping the robot forward and lifting the drive wheels off
+         the ground — body never translated even at full cmd_vel. -->
+    <origin xyz="${base_length/2 - wheel_radius/2} 0 ${-wheel_radius/2}" rpy="0 0 0"/>
   </joint>
 
   <gazebo reference="caster_wheel">
     <material>Gazebo/Grey</material>
-    <mu1>0.0</mu1>
-    <mu2>0.0</mu2>
+    <mu1>0.05</mu1>
+    <mu2>0.05</mu2>
   </gazebo>
 
   <!-- Camera Mount Platform -->
